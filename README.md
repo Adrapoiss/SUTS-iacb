@@ -1,5 +1,6 @@
 # SUTS-iacb
 Arendusplaadil ja maketil B-doti arendus
+NB:repost puudub praegu Debug kaust(liiga suur), peaks olema jooksutatav ka ilma?
 
 Uuenduslogi:
 04/02 - I2C ühendus katki, ei saa pärida LIS3MDL-ilt WHO_AM_I registrit ja sellest tulenevalt edasi ei lähe koodis. 
