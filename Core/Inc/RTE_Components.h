@@ -23,7 +23,6 @@
 
 /* Defines ------------------------------------------------------------------*/
 /* STMicroelectronics.X-CUBE-MEMS1.11.1.0 */
-#define BSP_MOTION_SENSORS
 #define LIS3MDL_MAG_I2C
 
 #endif /* __RTE_COMPONENTS_H__ */
