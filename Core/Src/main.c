@@ -6,8 +6,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "lis3mdl.h" // ***THIS IS CRUCIAL - INCLUDE THE LIS3MDL HEADER***
-#include "stdio.h"  // For printf
+#include "lis3mdl.h" 
+#include "stdio.h"  
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,7 +34,7 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 
 UART_HandleTypeDef huart2;
-LIS3MDL_Object_t lis3mdl; // Initialize!
+LIS3MDL_Object_t lis3mdl; 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -49,7 +49,7 @@ static void MX_SPI2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void LIS3MDL_CS_Select(void) {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); // Assuming PB6 is your CS pin
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
 }
 
 void LIS3MDL_CS_Deselect(void) {
