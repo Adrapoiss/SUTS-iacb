@@ -20,7 +20,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32l0xx_it.h"
-#include "stdio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -84,25 +83,14 @@ void NMI_Handler(void)
   */
 void HardFault_Handler(void)
 {
-    // Get the fault status registers
-    __asm volatile (
-        "MRS r0, MSP\n"          // Get the main stack pointer
-        "B hard_fault_handler_c\n" // Branch to the C handler
-    );
-}
+  /* USER CODE BEGIN HardFault_IRQn 0 */
 
-void hard_fault_handler_c(uint32_t *stack)
-{
-    // Print the stack contents for debugging
-	printf("R0: 0x%08lX\r\n", (unsigned long)stack[0]);
-	printf("R1: 0x%08lX\r\n", (unsigned long)stack[1]);
-	printf("R2: 0x%08lX\r\n", (unsigned long)stack[2]); //mingid lisanäitajad et debuggida
-	printf("R3: 0x%08lX\r\n", (unsigned long)stack[3]);
-	printf("R12: 0x%08lX\r\n", (unsigned long)stack[4]);
-	printf("LR: 0x%08lX\r\n", (unsigned long)stack[5]);
-	printf("PC: 0x%08lX\r\n", (unsigned long)stack[6]);
-	printf("PSR: 0x%08lX\r\n", (unsigned long)stack[7]);
-    while (1); // Stay in an infinite loop
+  /* USER CODE END HardFault_IRQn 0 */
+  while (1)
+  {
+    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+    /* USER CODE END W1_HardFault_IRQn 0 */
+  }
 }
 
 /**
