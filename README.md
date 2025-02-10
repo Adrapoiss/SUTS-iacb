@@ -9,3 +9,4 @@ Uuenduslogi:
 MCU poole pealt saab liides initsialiseeritud kuid magnetomeetrilt vastust ei tule. Draiverid implementeeritud ja sellega kaasa käivad funktsioonid juba koodis olemas, sensoriga ühenduse saamisel peaks olema üsnagi kerge vaev andmeid lugeda.
 
 09/02 - SPI töötab, pole hetkel kindel kas ka nii nagu peaks kuid andmed tunduvad üsna korrektsed. Vajab testimist.
+10/02 - Temperatuuri väljastatakse koos magnetvälja komponentidega.
