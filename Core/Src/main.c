@@ -6,8 +6,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "lis3mdl.h" 
-#include "stdio.h"  
+#include "lis3mdl.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -17,8 +17,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define LIS3MDL_I2C_ADDRESS LIS3MDL_I2C_ADD_L // Or LIS3MDL_I2C_ADD_L if SA0 is low
-#define BUS_I2C1_POLL_TIMEOUT 100 // Define the timeout
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -34,7 +33,7 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 
 UART_HandleTypeDef huart2;
-LIS3MDL_Object_t lis3mdl; 
+LIS3MDL_Object_t lis3mdl; // Initialize!
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -49,7 +48,7 @@ static void MX_SPI2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void LIS3MDL_CS_Select(void) {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); 
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET); //CS pin
 }
 
 void LIS3MDL_CS_Deselect(void) {
@@ -167,6 +166,17 @@ int main(void)
           printf("Error setting full scale\r\n");
           Error_Handler();
       }
+      uint8_t ctrl_reg1_value;
+      if (LIS3MDL_Read_Reg(&lis3mdl, LIS3MDL_CTRL_REG1, &ctrl_reg1_value) != LIS3MDL_OK) {
+              printf("Error reading CTRL_REG1\r\n");
+              Error_Handler();
+          }
+
+      ctrl_reg1_value |= 0x80; // Set TEMP_EN bit et sensor loeks ka temperatuuri
+      if (LIS3MDL_Write_Reg(&lis3mdl, LIS3MDL_CTRL_REG1, ctrl_reg1_value) != LIS3MDL_OK) {
+          printf("Error writing CTRL_REG1\r\n");
+          Error_Handler();
+      }
 
   /* USER CODE END 2 */
 
@@ -176,6 +186,8 @@ int main(void)
           lis3mdl_axis3bit16_t mag_raw; // Correct type for raw data
           float sensitivity;
           float odr;
+          int16_t temperature_raw;
+          float temperature;
 
           LIS3MDL_MAG_GetOutputDataRate(&lis3mdl, &odr); // Get current ODR
 
@@ -195,9 +207,20 @@ int main(void)
                   //okei (X:+-XXX Y:+-YYY Z:+-ZZZ). Seega lasin AI mingi asja siia genereerida millest väljund otseselt ei muutunud. Pean testima mõlemat.
 
                   printf("X: %ld, Y: %ld, Z: %ld\r\n", mag.x, mag.y, mag.z);
-              } else {
-                  printf("Error reading magnetometer data\r\n");
               }
+              else {
+                  printf("Error reading magnetometer\r\n");
+              }
+              uint8_t temp_data[2];
+              if (LIS3MDL_Read_Reg(&lis3mdl, LIS3MDL_TEMP_OUT_L, temp_data) == LIS3MDL_OK) {
+              	temperature_raw = (int16_t)((temp_data[1] << 8) | temp_data[0]);  //kaks 8bitist sõna MSB ja LSB, LSB shift vasakule
+              	temperature = (float)temperature_raw / 8.0f + 25.0f; //Iga kraad on 8 LSB muutus ja +25 sest väärtus 0 on andmelehe järgi 25 C
+                	printf("Temp: %.2f C\r\n", temperature);
+              }
+              else {
+              	printf("Error reading temp\r\n");
+              }
+
 
               HAL_Delay((uint32_t)(1000.0f / odr)); // Delay based on ODR
           }
