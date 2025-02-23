@@ -188,6 +188,7 @@ int main(void)
           float odr;
           int16_t temperature_raw;
           float temperature;
+          float eelmine_b_x = 0;
 
           LIS3MDL_MAG_GetOutputDataRate(&lis3mdl, &odr); // Get current ODR
 
@@ -206,6 +207,21 @@ int main(void)
                   //Saab lugeda ka lihtsalt Read_Magnetometer() funktsiooniga, ise kahtlustan et loeb praegu ainult 8 bitti kuigi väljund tegelikult on vist
                   //okei (X:+-XXX Y:+-YYY Z:+-ZZZ). Seega lasin AI mingi asja siia genereerida millest väljund otseselt ei muutunud. Pean testima mõlemat.
 
+
+                  float b_dot_x = mag.x - eelmine_b_x; //magnetvälja muut
+                  eelmine_b_x = mag.x;
+
+                  //Bang-Bang juhtimine
+                  //float mu_x_ctrl = 0; //läheb vaja väänduritega
+                  if (b_dot_x > 0) {
+                  	//mu_x_ctrl = -mu_max; // Negatiivne led põleb
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+                  }
+                  else if (b_dot_x < 0) {
+                    //mu_x_ctrl = mu_max;  // Positiivne led ei põle
+                    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+                    }
+
                   printf("X: %ld, Y: %ld, Z: %ld\r\n", mag.x, mag.y, mag.z);
               }
               else {
@@ -215,14 +231,15 @@ int main(void)
               if (LIS3MDL_Read_Reg(&lis3mdl, LIS3MDL_TEMP_OUT_L, temp_data) == LIS3MDL_OK) {
               	temperature_raw = (int16_t)((temp_data[1] << 8) | temp_data[0]);  //kaks 8bitist sõna MSB ja LSB, LSB shift vasakule
               	temperature = (float)temperature_raw / 8.0f + 25.0f; //Iga kraad on 8 LSB muutus ja +25 sest väärtus 0 on andmelehe järgi 25 C
-                	printf("Temp: %.2f C\r\n", temperature);
-              }
-              else {
-              	printf("Error reading temp\r\n");
-              }
+              	printf("Temp: %.2f C\r\n", temperature);
+               }
+               else {
+               	printf("Error reading temp\r\n");
+               }
 
 
               HAL_Delay((uint32_t)(1000.0f / odr)); // Delay based on ODR
+              //HAL_Delay(1000);
           }
   /* USER CODE END 3 */
 }
